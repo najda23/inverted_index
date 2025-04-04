@@ -1,0 +1,35 @@
+Innovations in the field of artificial intelligence continue to shape the future of humanity across nearly every industry. AI is already the main driver of emerging technologies like big data, robotics and IoT, and generative AI has further expanded the possibilities and popularity of AI. 
+
+According to a 2023 IBM survey, 42 percent of enterprise-scale businesses integrated AI into their operations, and 40 percent are considering AI for their organizations. In addition, 38 percent of organizations have implemented generative AI into their workflows while 42 percent are considering doing so.
+
+With so many changes coming at such a rapid pace, here’s what shifts in AI could mean for various industries and society at large.
+
+The Evolution of AI
+AI has come a long way since 1951, when the first documented success of an AI computer program was written by Christopher Strachey, whose checkers program completed a whole game on the Ferranti Mark I computer at the University of Manchester. Thanks to developments in machine learning and deep learning, IBM’s Deep Blue defeated chess grandmaster Garry Kasparov in 1997, and the company’s IBM Watson won Jeopardy! in 2011.  
+
+Since then, generative AI has spearheaded the latest chapter in AI’s evolution, with OpenAI releasing its first GPT models in 2018. This has culminated in OpenAI developing its GPT-4o model and ChatGPT, leading to a proliferation of AI generators that can process queries to produce relevant text, audio, images and other types of content.
+
+Other companies have followed suit with competing models of their own, including Google’s Gemini, Anthropic’s Claude and DeepSeek’s R1 and V3 models, which made headlines in early 2025 for approaching parity with competing models at a fraction of the operational cost.
+
+AI has also been used to help sequence RNA for vaccines and model human speech, technologies that rely on model- and algorithm-based machine learning and increasingly focus on perception, reasoning and generalization. 
+
+ 
+
+How AI Will Impact the Future
+Improved Business Automation 
+About 55 percent of organizations have adopted AI to varying degrees, suggesting increased automation for many businesses in the near future. With the rise of chatbots and digital assistants, companies can rely on AI to handle simple conversations with customers and answer basic queries from employees.
+
+AI’s ability to analyze massive amounts of data and convert its findings into convenient visual formats can also accelerate the decision-making process. Company leaders don’t have to spend time parsing through the data themselves, instead using instant insights to make informed decisions.
+
+“If [developers] understand what the technology is capable of and they understand the domain very well, they start to make connections and say, ‘Maybe this is an AI problem, maybe that’s an AI problem,’” said Mike Mendelson, a learner experience designer for NVIDIA. “That’s more often the case than, ‘I have a specific problem I want to solve.’”
+Job Disruption
+Business automation has naturally led to fears over job losses. In fact, employees believe almost one-third of their tasks could be performed by AI. Although AI has made gains in the workplace, it’s had an unequal impact on different industries and professions. For example, manual jobs like secretaries are at risk of being automated, but the demand for other jobs like machine learning specialists and information security analysts has risen.
+
+Workers in more skilled or creative positions are more likely to have their jobs augmented by AI, rather than be replaced. Whether forcing employees to learn new tools or taking over their roles, AI is set to spur upskilling efforts at both the individual and company level.     
+
+“One of the absolute prerequisites for AI to be successful in many [areas] is that we invest tremendously in education to retrain people for new jobs,” said Klara Nahrstedt, a computer science professor at the University of Illinois at Urbana–Champaign and director of the school’s Coordinated Science Laboratory.
+
+Data Privacy Issues
+Companies require large volumes of data to train the models that power generative AI tools, and this process has come under intense scrutiny. Concerns over companies collecting consumers’ personal data have led the FTC to open an investigation into whether OpenAI has negatively impacted consumers through its data collection methods after the company potentially violated European data protection laws. 
+
+In response, the Biden-Harris administration developed an AI Bill of Rights that lists data privacy as one of its core principles. Although this legislation doesn’t carry much legal weight, it reflects the growing push to prioritize data privacy and compel AI companies to be more transparent and cautious about how they compile training data.      
