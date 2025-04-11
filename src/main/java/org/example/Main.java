@@ -1,7 +1,7 @@
 package org.example;
 
 import java.io.*;
-import java.nio.file.*;
+import java.net.URL;
 import java.sql.*;
 import java.util.*;
 
@@ -11,15 +11,28 @@ public class Main {
             "der", "die", "das", "und", "ein", "eine", "ist", "in", "am", "zu", "mit", "auf", "für"
     );
 
-    private static final String URL = "jdbc:mysql://htl-projekt.com:3306/2024_4by_lejdifusha_inverted_index";  // Replace 'your_database_name' with your actual DB name
+    private static final String DB_URL = "jdbc:mysql://htl-projekt.com:3306/2024_4by_lejdifusha_inverted_index";
     private static final String USER = "lejdifusha";
     private static final String PASSWORD = "!Insy_2023$";
 
-    public static void add(String filename) throws Exception {
-        String text = Files.readString(Paths.get(filename));
-        String title = new File(filename).getName();
+    // Helper method to read a file from a remote URL
+    public static String readFromUrl(String urlStr) throws IOException {
+        StringBuilder content = new StringBuilder();
+        URL url = new URL(urlStr);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        }
+        return content.toString();
+    }
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+    public static void add(String url) throws Exception {
+        String text = readFromUrl(url);
+        String title = url.substring(url.lastIndexOf('/') + 1);  // extract file name from URL
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
             // Save document
             PreparedStatement insertDoc = conn.prepareStatement(
                     "INSERT INTO documents (title, text) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -51,13 +64,18 @@ public class Main {
         }
     }
 
-
-
-
+    public static void main(String[] args) {
+        // Replace with your actual GitHub username/repo/branch path
+        String baseUrl = "https://raw.githubusercontent.com/najda23/inverted_index/refs/heads/main/text";
+        for (int i = 1; i <= 10; i++) {
+            String url = baseUrl + i + ".txt";
+            try {
+                add(url);
+                System.out.println("Datei " + url + " wurde erfolgreich hinzugefügt und indexiert.");
+            } catch (Exception e) {
+                System.err.println("Fehler beim Verarbeiten von " + url);
+                e.printStackTrace();
+            }
         }
     }
 }
-
-
-
-
