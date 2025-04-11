@@ -38,7 +38,18 @@ public class Main {
                     wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
                 }
             }
-
+            // Save inverted index
+            PreparedStatement insertIndex = conn.prepareStatement(
+                    "INSERT INTO inverted_index (word, document_id, frequency) VALUES (?, ?, ?)");
+            for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+                insertIndex.setString(1, entry.getKey());
+                insertIndex.setInt(2, docId);
+                insertIndex.setInt(3, entry.getValue());
+                insertIndex.addBatch();
+            }
+            insertIndex.executeBatch();
+        }
+    }
 
 
 
