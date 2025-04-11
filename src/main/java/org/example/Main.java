@@ -31,6 +31,14 @@ public class Main {
             if (!keys.next()) throw new SQLException("Kein Dokument-ID erhalten!");
             int docId = keys.getInt(1);
 
+            // Tokenize, filter, and count
+            Map<String, Integer> wordCount = new HashMap<>();
+            for (String word : text.toLowerCase().split("\\W+")) {
+                if (word.length() > 1 && !stopwords.contains(word)) {
+                    wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+                }
+            }
+
 
 
 
