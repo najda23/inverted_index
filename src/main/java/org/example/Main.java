@@ -121,6 +121,27 @@ public class Main {
             e.printStackTrace();
         }
     }
+    // Native MySQL Full-Text-Suche
+    public static void nativeFulltextSearch(String query) {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT title, MATCH(text) AGAINST (? IN NATURAL LANGUAGE MODE) AS relevance " +
+                            "FROM documents WHERE MATCH(text) AGAINST (? IN NATURAL LANGUAGE MODE) " +
+                            "ORDER BY relevance DESC"
+            );
+            stmt.setString(1, query);
+            stmt.setString(2, query);
+
+            ResultSet rs = stmt.executeQuery();
+            System.out.println("\n result for native fulltext-search: \"" + query + "\"");
+            while (rs.next()) {
+                System.out.println(" Document: " + rs.getString("title") + " (Relevance: " + rs.getDouble("relevance") + ")");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error in native-fulltext-search: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         // Repo link
@@ -136,5 +157,6 @@ public class Main {
             }
         }
         search("generative");
+        nativeFulltextSearch("Gender");
     }
 }
