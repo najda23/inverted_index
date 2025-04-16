@@ -64,18 +64,77 @@ public class Main {
         }
     }
 
+    // Search method using the inverted index
+    public static void search(String query) {
+        // Split query into words, make lowercase, and remove symbols
+        String[] terms = query.toLowerCase().split("\\W+");
+
+        // Filter out short words and stopwords
+        List<String> filteredTerms = new ArrayList<>();
+        for (String term : terms) {
+            if (term.length() > 1 && !stopwords.contains(term)) {
+                filteredTerms.add(term);
+            }
+        }
+
+        // Stores document scores and titles
+        Map<Integer, Integer> documentScores = new HashMap<>();
+        Map<Integer, String> documentTitles = new HashMap<>();
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+            // Prepare SQL to get matching documents and their word frequency
+            PreparedStatement getDocs = conn.prepareStatement(
+                    "SELECT ii.document_id, ii.frequency, d.title " +
+                            "FROM inverted_index ii JOIN documents d ON ii.document_id = d.id " +
+                            "WHERE word = ?");
+
+            // For each word in the query
+            for (String term : filteredTerms) {
+                getDocs.setString(1, term);
+                ResultSet rs = getDocs.executeQuery();
+
+                // Go through all documents containing the word
+                while (rs.next()) {
+                    int docId = rs.getInt("document_id");
+                    int freq = rs.getInt("frequency");
+                    String title = rs.getString("title");
+
+                    // Add frequency to score for this document
+                    documentScores.put(docId, documentScores.getOrDefault(docId, 0) + freq);
+                    // Save document title
+                    documentTitles.put(docId, title);
+                }
+            }
+
+            // Show search results sorted by score (highest first)
+            System.out.println("\nResults for the search of: \"" + query + "\"");
+            documentScores.entrySet().stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                    .forEach(entry -> {
+                        int docId = entry.getKey();
+                        int score = entry.getValue();
+                        System.out.println("Document: " + documentTitles.get(docId) + " (Score: " + score + ")");
+                    });
+
+        } catch (SQLException e) {
+            System.err.println("Error in search: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        // Replace with your actual GitHub username/repo/branch path
+        // Repo link
         String baseUrl = "https://raw.githubusercontent.com/najda23/inverted_index/refs/heads/main/text";
         for (int i = 1; i <= 10; i++) {
             String url = baseUrl + i + ".txt";
             try {
                 add(url);
-                System.out.println("Datei " + url + " wurde erfolgreich hinzugefügt und indexiert.");
+                System.out.println("Data " + url + " are being searched and indexed.");
             } catch (Exception e) {
-                System.err.println("Fehler beim Verarbeiten von " + url);
+                System.err.println("Error in processing " + url);
                 e.printStackTrace();
             }
         }
+        search("generative");
     }
 }
