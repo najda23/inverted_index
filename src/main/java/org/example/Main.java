@@ -15,31 +15,33 @@ public class Main {
     private static final String USER = "lejdifusha";
     private static final String PASSWORD = "!Insy_2023$";
 
-    // Helper method to read a file from a remote URL
+    // Read the full content of a file from the given repo URL
     public static String readFromUrl(String urlStr) throws IOException {
         StringBuilder content = new StringBuilder();
         URL url = new URL(urlStr);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
+                content.append(line).append("\n"); // Add each line to the text
             }
         }
         return content.toString();
     }
 
+    // Add document to the database and update inverted index
     public static void add(String url) throws Exception {
         String text = readFromUrl(url);
         String title = url.substring(url.lastIndexOf('/') + 1);  // extract file name from URL
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            // Save document
+            // Insert document into the documents table in the database
             PreparedStatement insertDoc = conn.prepareStatement(
                     "INSERT INTO documents (title, text) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
             insertDoc.setString(1, title);
             insertDoc.setString(2, text);
             insertDoc.executeUpdate();
 
+            // Get generated document ID
             ResultSet keys = insertDoc.getGeneratedKeys();
             if (!keys.next()) throw new SQLException("Kein Dokument-ID erhalten!");
             int docId = keys.getInt(1);
@@ -51,7 +53,7 @@ public class Main {
                     wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
                 }
             }
-            // Save inverted index
+            // Insert words into the inverted index
             PreparedStatement insertIndex = conn.prepareStatement(
                     "INSERT INTO inverted_index (word, document_id, frequency) VALUES (?, ?, ?)");
             for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
@@ -60,12 +62,13 @@ public class Main {
                 insertIndex.setInt(3, entry.getValue());
                 insertIndex.addBatch();
             }
-            insertIndex.executeBatch();
+            insertIndex.executeBatch(); // Save all words in one go
         }
     }
 
     // Search method using the inverted index
     public static void search(String query) {
+
         // Split query into words, make lowercase, and remove symbols
         String[] terms = query.toLowerCase().split("\\W+");
 
@@ -82,6 +85,7 @@ public class Main {
         Map<Integer, String> documentTitles = new HashMap<>();
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
             // Prepare SQL to get matching documents and their word frequency
             PreparedStatement getDocs = conn.prepareStatement(
                     "SELECT ii.document_id, ii.frequency, d.title " +
@@ -121,9 +125,12 @@ public class Main {
             e.printStackTrace();
         }
     }
-    // Native MySQL Full-Text-Suche
+
+    // Native MySQL Full-Text-Search
     public static void nativeFulltextSearch(String query) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            // Use MySQL MATCH ... AGAINST for fulltext relevance scoring
             PreparedStatement stmt = conn.prepareStatement(
                     "SELECT title, MATCH(text) AGAINST (? IN NATURAL LANGUAGE MODE) AS relevance " +
                             "FROM documents WHERE MATCH(text) AGAINST (? IN NATURAL LANGUAGE MODE) " +
@@ -133,7 +140,7 @@ public class Main {
             stmt.setString(2, query);
 
             ResultSet rs = stmt.executeQuery();
-            System.out.println("\n result for native fulltext-search: \"" + query + "\"");
+            System.out.println("\nResult for native fulltext-search: \"" + query + "\"");
             while (rs.next()) {
                 System.out.println(" Document: " + rs.getString("title") + " (Relevance: " + rs.getDouble("relevance") + ")");
             }
@@ -144,18 +151,21 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // Repo link
+
+        // Repo  URL to get the 10 text files
         String baseUrl = "https://raw.githubusercontent.com/najda23/inverted_index/refs/heads/main/text";
         for (int i = 1; i <= 10; i++) {
             String url = baseUrl + i + ".txt";
             try {
-                add(url);
+                add(url); // Add document and update index
                 System.out.println("Data " + url + " are being searched and indexed.");
             } catch (Exception e) {
                 System.err.println("Error in processing " + url);
                 e.printStackTrace();
             }
         }
+
+        // Run both search types
         search("generative");
         nativeFulltextSearch("Gender");
     }
